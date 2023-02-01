@@ -1,31 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import MovieList from "./movielist";
-const Filter = ({ movies }) => {
+const Filter = ({ movies, filteredMovies, setFilteredMovies }) => {
   const [title, setTitle] = useState("");
-  const [minRating, setMinRating] = useState(0);
-  const [filteredMovies, setFilteredMovies] = useState(movies);
+  const [minRating, setMinRating] = useState(0.0);
   const [showNoResults, setShowNoResults] = useState(false);
+  useEffect(
+    () => setFilteredMovies(onFilter(movies, title, minRating)),
+    [movies]
+  );
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
 
   const handleRatingChange = (e) => {
-    setMinRating(e.target.value);
+    setMinRating(parseFloat(e.target.value));
   };
   const onFilter = (movies, title, minRating) => {
-    if (title === "" && minRating === 0) {
+    if (title === "" && minRating === 0.0) {
       return movies;
-    } else if (title === "" && minRating >= 0) {
-      return movies.filter((item) => item.rating >= minRating);
-    } else if (title !== "" && minRating >= 0) {
-      return movies.filter(
-        (item) => item.title === title && item.rating >= minRating
-      );
+    } else if (title === "" && minRating >= 0.0) {
+      return movies
+        .filter((item) => item.rating >= minRating)
+        .sort((a, b) => {
+          return b.rating - a.rating;
+        });
     } else {
-      return movies.filter(
-        (item) => item.titel === title && item.rating >= minRating
-      );
+      return movies
+        .filter(
+          (item) =>
+            item.title.toLowerCase() === title.toLowerCase() &&
+            item.rating >= minRating
+        )
+        .sort((a, b) => {
+          return b.rating - a.rating;
+        });
     }
   };
 
@@ -88,8 +97,8 @@ const Filter = ({ movies }) => {
               type="number"
               value={minRating}
               onChange={handleRatingChange}
-              min={0}
-              max={10}
+              min={0.0}
+              max={10.0}
               step="0.1"
             />
           </Form.Group>
@@ -114,7 +123,9 @@ const Filter = ({ movies }) => {
 
       {/**************Filter Movies****************/}
       {showNoResults && <h1>Nothing was found !</h1>}
-      {!showNoResults && <MovieList movies={filteredMovies} />}
+      {!showNoResults && (
+        <MovieList movies={movies} filteredMovies={filteredMovies} />
+      )}
     </div>
   );
 };

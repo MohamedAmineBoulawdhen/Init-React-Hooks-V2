@@ -4,32 +4,26 @@ import { useState } from "react";
 function App() {
   const [movies, setMovies] = useState([
     {
-      id: 0,
-      title: "Mr. Robot",
+      title: "Frozen Planet",
       description:
-        "Elliot, a brilliant but highly unstable young cyber-security engineer and vigilante hacker, becomes a key figure in a complex game of global dominance when he and his shadowy allies try to take down the corrupt corporation he works for.",
-      posterURL:
-        "https://m.media-amazon.com/images/M/MV5BM2QyNDIzOGMtNThhNS00NmUwLWI0ZjUtZjdkN2I1OTRjZWQ3XkEyXkFqcGdeQXVyNzQ1ODk3MTQ@._V1_.jpg",
-      rating: 8.6,
+        "Ambitious and epic in scale, Frozen Planet is the ultimate portrait of the polar regions, capturing all the fragile, jaw-dropping beauty and majestic power of the elements, in the greatest wildernesses on Earth.",
+      posterURL: "./Frozenplanet.jpg",
+      rating: 9.9,
     },
     {
-      id: 1,
-      title: "The Godfather",
+      title: "Flooded Tombs of the Nile",
       description:
-        "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
-      posterURL:
-        "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_UX182_CR0,0,182,268_AL_.jpg",
-      rating: 9.2,
+        "Archaeologist's dive into a flooded pyramid near the Nile, to search for a king's burial that could reveal clues about the ancient kingdom of Kush.",
+      posterURL: "./FloodedTombs.jpg",
+      rating: 7.1,
     },
   ]);
+  const [filteredMovies, setFilteredMovies] = useState(movies);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [posterURL, setPosterURL] = useState("");
-  const [rating, setRating] = useState("");
+  const [rating, setRating] = useState(0.0);
   const newMovie = {};
-  const addMovie = (newMovie) => {
-    setMovies([...movies, newMovie]);
-  };
   const handleTitel = (e) => {
     setTitle(e.target.value);
   };
@@ -40,7 +34,7 @@ function App() {
     setPosterURL(e.target.value);
   };
   const handlerating = (e) => {
-    setRating(e.target.value);
+    setRating(parseFloat(e.target.value));
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -49,17 +43,23 @@ function App() {
     newMovie.description = description;
     newMovie.posterURL = posterURL;
     newMovie.rating = rating;
-    addMovie(newMovie);
+    setMovies([...movies, newMovie]);
+    setFilteredMovies(movies);
     setTitle("");
     setDescription("");
     setPosterURL("");
-    setRating("");
+    setRating(0.0);
   };
   return (
     <div style={{ margin: "20px" }}>
       {/**************Filter Movies****************/}
       <div style={{ margin: "20px 0px" }}>
-        <Filter movies={movies} />
+        <Filter
+          movies={movies}
+          setMovies={setMovies}
+          filteredMovies={filteredMovies}
+          setFilteredMovies={setFilteredMovies}
+        />
       </div>
       {/**************Filter Movies****************/}
       {/**************Adding Movies****************/}
@@ -71,11 +71,16 @@ function App() {
           borderRadius: "10px",
         }}
       >
-        <h1>Adding Movies</h1>
+        <h1 className="textCenter">Add Movies</h1>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
             <Form.Label as="h2">Titel</Form.Label>
-            <Form.Control type="text" value={title} onChange={handleTitel} />
+            <Form.Control
+              type="text"
+              value={title}
+              onChange={handleTitel}
+              required
+            />
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
             <Form.Label as="h2">Description:</Form.Label>
@@ -84,6 +89,7 @@ function App() {
               rows={3}
               value={description}
               onChange={handledescription}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -92,6 +98,7 @@ function App() {
               type="text"
               value={posterURL}
               onChange={handleposterURL}
+              required
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
@@ -100,9 +107,10 @@ function App() {
               type="number"
               value={rating}
               onChange={handlerating}
-              min={0}
-              max={10}
+              min={0.0}
+              max={10.0}
               step="0.1"
+              required
             />
           </Form.Group>
           <button

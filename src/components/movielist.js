@@ -1,11 +1,11 @@
 import React from "react";
 import MovieCard from "./moviecard";
 
-const MovieList = ({ movies }) => {
+const MovieList = ({ filteredMovies }) => {
   return (
     <div>
-      {movies.map((movie) => (
-        <MovieCard key={movie.id} {...movie} />
+      {filteredMovies.map((movie, index) => (
+        <MovieCard key={index} {...movie} />
       ))}
     </div>
   );
