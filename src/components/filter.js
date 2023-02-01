@@ -18,7 +18,9 @@ const Filter = ({ movies, filteredMovies, setFilteredMovies }) => {
   };
   const onFilter = (movies, title, minRating) => {
     if (title === "" && minRating === 0.0) {
-      return movies;
+      return movies.sort((a, b) => {
+          return b.rating - a.rating;
+        });
     } else if (title === "" && minRating >= 0.0) {
       return movies
         .filter((item) => item.rating >= minRating)
